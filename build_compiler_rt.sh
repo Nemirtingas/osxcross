@@ -262,20 +262,22 @@ if [ $f_res -eq 1 ]; then
 
       arch1=$(echo $ARCHS | awk '{print $1}')
 
-      for file in $(ls build_$arch1/lib/darwin/); do
+      for file in build_"$arch1"/lib/darwin/*; do
+        [ -f "$file" ] || continue
+        [[ "$file" == *.txt ]] && continue
+
+        filename=$(basename "$file")
         libs=""
 
         for arch in $ARCHS; do
-          lib="build_$arch/lib/darwin/$file"
-          [ -n "$libs" ] && libs+=" "
-          if [ -f "$lib" ]; then
-            libs+="$lib"
-          fi
+          lib="build_$arch/lib/darwin/$filename"
+          [ -f "$lib" ] && libs="$libs $lib"
         done
 
-        xcrun lipo -create $libs -output build_$arch1/lib/darwin/$file.lipo
-        rm build_$arch1/lib/darwin/$file
-        mv build_$arch1/lib/darwin/$file.lipo build_$arch1/lib/darwin/$file
+        [ -n "$libs" ] || continue
+
+        xcrun lipo -create $libs -output "$file.lipo"
+        mv "$file.lipo" "$file"
       done
 
       create_symlink build_$arch1 build
