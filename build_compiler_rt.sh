@@ -170,6 +170,7 @@ if [ $f_res -eq 1 ]; then
 
         extra_cmake_flags+="-DDARWIN_osx_ARCHS=$arch "
         extra_cmake_flags+="-DDARWIN_osx_BUILTIN_ARCHS=$arch "
+		extra_cmake_flags+="-DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 "
 
         if [ $arch == "arm64" ] || [ $arch == "arm64e" ]; then
           # https://github.com/tpoechtrager/osxcross/issues/259
