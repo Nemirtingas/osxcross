@@ -164,6 +164,12 @@ if [ $f_res -eq 1 ]; then
         echo ""
       fi
 
+      # libFuzzer uses std::filesystem, only available since macOS 10.15
+      if [ $(cmp-version "${DEFAULT_DEPLOYMENT_TARGET:-0}" "<" 10.15) -eq 1 ]; then
+        extra_cmake_flags+="-DSANITIZER_MIN_OSX_VERSION=10.15 "
+        extra_cmake_flags+="-DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 "
+      fi
+
       mkdir $build_dir
       pushd $build_dir &>/dev/null
 
